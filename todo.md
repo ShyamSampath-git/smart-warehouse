@@ -1,0 +1,16 @@
+- [ ] Replace feedback-only controls with stateful warehouse actions.
+- [x] Persist actions during the session and expose visible order, inventory, and audit updates.
+- [x] Verify conflict resolution, filtering, exports, and navigation actions in the preview.
+- [x] Upgrade the project to the full-stack database and storage template.
+- [x] Create persistent order, inventory, audit, and warehouse document models.
+- [x] Replace browser-only operational state with database-backed queries and mutations.
+- [x] Add a document upload and retrieval workflow using integrated file storage.
+- [x] Verify database persistence and document management in the live preview.
+- [x] Upgrade the project with database-backed application capabilities.
+- [x] Create persistent warehouse order, inventory, and audit data models with seeded operational records.
+- [x] Replace browser-only storage with database-backed queries and mutations.
+- [x] Verify decisions, order progression, and audit history persist after a refresh.
+- [x] Confirm starter operational records are explicitly created from database seed logic.
+- [x] Test the document upload interaction through the preview interface and confirm the stored file can be opened.
+- [x] Verify every main navigation destination loads correctly in the live preview.
+- [x] Verify returning between navigation sections preserves the persistent workspace state without dead ends.
