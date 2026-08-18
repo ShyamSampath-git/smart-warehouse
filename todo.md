@@ -25,3 +25,12 @@
 - [x] Prevent session synchronization from clearing local-account names and email addresses after password sign-in.
 - [x] Clarify and verify owner-only private-profile access without an app-level administrator bypass.
 - [x] Properly synchronize the private-profile form from the loaded profile response and verify the saved name auto-populates on first open.
+- [x] Trace the reported failed tRPC mutation across browser, server, session, and database diagnostics.
+- [x] Repair the failed warehouse mutation request path and add a resilient user-facing error state.
+- [x] Verify authenticated profile and warehouse mutations complete successfully after the repair.
+- [x] Connect the Command Center priority-queue Advance controls to the persistent order mutation rather than a no-op handler.
+- [x] Replace the temporary DOM-delegated priority-queue action workaround with explicit typed component props.
+- [x] Verify an authenticated private-profile update mutation completes successfully after the transport recovery.
+- [x] Document the confirmed mutation failure cause and retain the resilient transport-error feedback path.
+- [x] Replace the Command Center panel's permissive data props with concrete warehouse-order types.
+- [x] Persist a deliberately changed authenticated profile field and verify it after a fresh data load.
