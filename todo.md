@@ -1,4 +1,4 @@
-- [ ] Replace feedback-only controls with stateful warehouse actions.
+- [x] Replace feedback-only controls with stateful warehouse actions.
 - [x] Persist actions during the session and expose visible order, inventory, and audit updates.
 - [x] Verify conflict resolution, filtering, exports, and navigation actions in the preview.
 - [x] Upgrade the project to the full-stack database and storage template.
