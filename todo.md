@@ -45,3 +45,6 @@
 - [x] Inspect the reported Vite WebSocket/HMR failure in the preview and development-server logs.
 - [x] Repair the preview hot-reload WebSocket configuration or suppress a non-functional HMR client when appropriate.
 - [x] Verify the preview loads without Vite WebSocket console errors after the repair.
+- [x] Verify the user-edited sign-in headline copy and save a validated checkpoint.
+- [x] Verify the edited sign-in headline in the live preview after the copy update.
+- [x] Save a new checkpoint capturing the verified headline copy update.
