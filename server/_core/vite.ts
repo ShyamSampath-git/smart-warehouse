@@ -9,7 +9,10 @@ import viteConfig from "../../vite.config";
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
+    // The managed preview proxy serves HTTP but does not expose Vite's HMR
+    // WebSocket. Disable HMR here so Vite does not emit repeated client-side
+    // connection errors; the preview remains usable with a normal refresh.
+    hmr: false,
     allowedHosts: true as const,
   };
 

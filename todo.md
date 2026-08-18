@@ -42,3 +42,6 @@
 - [x] Add live field-level password validation with an accessible inline error state on the registration form.
 - [x] Browser-test weak-password registration feedback to confirm no global technical mutation error is emitted.
 - [x] Browser-test a valid password registration or sign-in flow after the validation update before confirming deployment readiness.
+- [x] Inspect the reported Vite WebSocket/HMR failure in the preview and development-server logs.
+- [x] Repair the preview hot-reload WebSocket configuration or suppress a non-functional HMR client when appropriate.
+- [x] Verify the preview loads without Vite WebSocket console errors after the repair.
