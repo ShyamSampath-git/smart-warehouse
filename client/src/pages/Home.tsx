@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, isValidElement, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertTriangle, ArrowRight, BarChart3, Boxes, Check, ChevronDown, CircleDot, ClipboardCheck, Clock3, Command,
@@ -33,6 +33,7 @@ function readFileAsBase64(file: File): Promise<string> { return new Promise((res
 function toneClass(tone: string) { return { rose: "border-rose-400/20 bg-rose-400/10 text-rose-200", amber: "border-amber-300/20 bg-amber-300/10 text-amber-200", emerald: "border-emerald-300/20 bg-emerald-300/10 text-emerald-200", sky: "border-sky-300/20 bg-sky-300/10 text-sky-200", teal: "border-teal-300/20 bg-teal-300/10 text-teal-200", indigo: "border-indigo-300/20 bg-indigo-300/10 text-indigo-200" }[tone] || "border-white/10 bg-white/5 text-slate-300"; }
 function orderTone(order: { priority: string; status: string; isConflict: boolean }) { if (order.isConflict) return "rose"; if (order.status === "Dispatched") return "emerald"; if (order.priority === "High") return "amber"; if (order.status === "Allocated") return "sky"; return "indigo"; }
 function ToneBadge({ children, tone }: { children: React.ReactNode; tone: string }) { return <Badge className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold ${toneClass(tone)}`}>{children}</Badge>; }
+function passwordIsStrong(value: string) { return value.length >= 12 && /[a-z]/.test(value) && /[A-Z]/.test(value) && /\d/.test(value); }
 
 function AccountGate({ regions }: { regions: Array<{ code: string; hubName: string; city: string; state: string }> }) {
   const utils = trpc.useUtils();
@@ -47,7 +48,13 @@ function AccountGate({ regions }: { regions: Array<{ code: string; hubName: stri
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (mode === "signin") signIn.mutate({ email, password });
-    else register.mutate({ name, email, password, preferredRegionCode: region });
+    else {
+      if (!passwordIsStrong(password)) {
+        toast.error("Choose a password with at least 12 characters, including upper-case, lower-case, and numeric characters.");
+        return;
+      }
+      register.mutate({ name, email, password, preferredRegionCode: region });
+    }
   };
   const busy = signIn.isPending || register.isPending;
   return <div className="relative min-h-screen overflow-hidden bg-[#07101c] px-5 py-10 text-slate-100"><div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_5%,rgba(57,214,198,0.16),transparent_32%),radial-gradient(circle_at_82%_85%,rgba(99,102,241,0.15),transparent_26%)]" />
@@ -56,7 +63,12 @@ function AccountGate({ regions }: { regions: Array<{ code: string; hubName: stri
       <section className="p-7 sm:p-10"><div className="flex rounded-xl border border-white/10 bg-white/[0.03] p-1"><button className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${mode === "signin" ? "bg-teal-300 text-[#07151b]" : "text-slate-400"}`} onClick={() => setMode("signin")}>Sign in</button><button className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${mode === "register" ? "bg-teal-300 text-[#07151b]" : "text-slate-400"}`} onClick={() => setMode("register")}>Create account</button></div><h2 className="mt-8 font-display text-2xl font-semibold text-white">{mode === "signin" ? "Welcome back" : "Create your private workspace"}</h2><p className="mt-2 text-sm text-slate-500">{mode === "signin" ? "Use your email and password. No OTP is required." : "Start with a secure profile and select your primary Indian hub."}</p><form className="mt-7 space-y-4" onSubmit={submit}>{mode === "register" && <Field label="Your name"><Input value={name} onChange={e => setName(e.target.value)} required minLength={2} placeholder="e.g. Riya Mehta" className="auth-input" /></Field>}<Field label="Email address"><Input value={email} type="email" onChange={e => setEmail(e.target.value)} required placeholder="name@company.in" className="auth-input" /></Field><Field label="Password"><Input value={password} type="password" onChange={e => setPassword(e.target.value)} required minLength={12} placeholder="Minimum 12 characters" className="auth-input" /></Field>{mode === "register" && <Field label="Primary warehouse region"><select value={region} onChange={e => setRegion(e.target.value)} className="auth-input"><option value="">Choose your primary hub</option>{regions.map(item => <option key={item.code} value={item.code}>{item.city}, {item.state} · {item.hubName}</option>)}</select></Field>}<Button type="submit" disabled={busy} className="mt-2 h-11 w-full bg-teal-300 font-bold text-[#07151b] hover:bg-teal-200">{busy ? <Loader2 className="animate-spin" size={16} /> : <KeyRound size={16} />}{mode === "signin" ? "Sign in securely" : "Create private account"}</Button></form><p className="mt-5 text-center text-[11px] leading-relaxed text-slate-600">For safety, the application stores a one-way password hash rather than your actual password.</p></section>
     </div></div>;
 }
-function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="block"><span className="mb-1.5 block text-xs font-semibold text-slate-300">{label}</span>{children}</label>; }
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  const passwordHint = label === "Password" ? "Use at least 12 characters with upper-case, lower-case, and numeric characters." : null;
+  const passwordValue = isValidElement<{ value?: unknown }>(children) && typeof children.props.value === "string" ? children.props.value : "";
+  const invalidPassword = Boolean(passwordHint && passwordValue && !passwordIsStrong(passwordValue));
+  return <label className="block"><span className="mb-1.5 block text-xs font-semibold text-slate-300">{label}</span>{children}{passwordHint && <span className="mt-1.5 block text-[11px] leading-relaxed text-slate-500">{passwordHint}</span>}{invalidPassword && <span role="alert" className="mt-1 block text-[11px] font-medium text-amber-300">Add the missing character types before continuing.</span>}</label>;
+}
 function Feature({ icon: Icon, title, detail }: { icon: typeof ShieldCheck; title: string; detail: string }) { return <div className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4"><Icon size={17} className="text-teal-300" /><h3 className="mt-3 text-sm font-semibold text-white">{title}</h3><p className="mt-1 text-xs leading-relaxed text-slate-500">{detail}</p></div>; }
 
 export default function Home() {

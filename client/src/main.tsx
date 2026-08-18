@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import { toast } from "sonner";
 import App from "./App";
-import { apiErrorMessage } from "./lib/apiError";
+import { apiErrorMessage, isExpectedAccountInputError } from "./lib/apiError";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -35,6 +35,7 @@ queryClient.getQueryCache().subscribe(event => {
 queryClient.getMutationCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.mutation.state.error;
+    if (isExpectedAccountInputError(error)) return;
     redirectToLoginIfUnauthorized(error);
     const userMessage = apiErrorMessage(error);
     if (userMessage) toast.error(userMessage);

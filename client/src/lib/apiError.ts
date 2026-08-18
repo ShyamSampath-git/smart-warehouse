@@ -5,3 +5,8 @@ export function apiErrorMessage(error: unknown) {
   }
   return null;
 }
+
+export function isExpectedAccountInputError(error: unknown) {
+  const message = error instanceof Error ? error.message : "";
+  return /password|email already registered|name must/i.test(message);
+}

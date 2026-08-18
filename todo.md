@@ -34,3 +34,11 @@
 - [x] Document the confirmed mutation failure cause and retain the resilient transport-error feedback path.
 - [x] Replace the Command Center panel's permissive data props with concrete warehouse-order types.
 - [x] Persist a deliberately changed authenticated profile field and verify it after a fresh data load.
+- [x] Review password validation and global mutation error handling for expected registration failures.
+- [x] Add clear client-side password requirements and inline validation to the registration form.
+- [x] Prevent expected password-validation responses from appearing as technical API-mutation errors.
+- [x] Verify password registration feedback, test/build health, and deployment readiness.
+- [x] Include the existing client password-error regression test in the automated test suite.
+- [x] Add live field-level password validation with an accessible inline error state on the registration form.
+- [x] Browser-test weak-password registration feedback to confirm no global technical mutation error is emitted.
+- [x] Browser-test a valid password registration or sign-in flow after the validation update before confirming deployment readiness.
