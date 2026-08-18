@@ -48,3 +48,12 @@
 - [x] Verify the user-edited sign-in headline copy and save a validated checkpoint.
 - [x] Verify the edited sign-in headline in the live preview after the copy update.
 - [x] Save a new checkpoint capturing the verified headline copy update.
+- [x] Complete a non-disruptive final end-to-end validation of automated tests, connections, preview console, navigation, and persistent warehouse actions.
+- [x] Save a final readiness checkpoint only after the validation is complete.
+- [x] Trace the remaining development-only Vite client request and preserve the proven working preview configuration because intercepting it prevents application startup; production builds do not include that development client.
+- [x] Re-run final validation while authenticated, including primary navigation and one visible persistent warehouse action without changing unrelated data.
+- [x] Save the final readiness checkpoint after authenticated validation succeeds.
+- [x] Diagnose and fix sign-in password validation that incorrectly requests missing spaces or blocks password submission.
+- [x] Add regression coverage and browser-verify sign-in password entry accepts a valid password without whitespace requirements.
+- [x] Perform one low-impact authenticated warehouse action and verify its visible state change.
+- [x] Confirm the final warehouse-action result persists after navigation or refresh before saving the final checkpoint.
