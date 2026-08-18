@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { workspaceUserId } from "./db";
 
 describe("workspaceUserId", () => {
-  it("uses the shared persistent workspace for unauthenticated preview visitors", () => {
-    expect(workspaceUserId(null)).toBe(0);
-    expect(workspaceUserId(undefined)).toBe(0);
+  it("rejects unauthenticated access to a private workspace", () => {
+    expect(() => workspaceUserId(null)).toThrow("Sign in to access this private workspace.");
+    expect(() => workspaceUserId(undefined)).toThrow("Sign in to access this private workspace.");
   });
 
   it("uses an authenticated operator's durable workspace when a user is present", () => {

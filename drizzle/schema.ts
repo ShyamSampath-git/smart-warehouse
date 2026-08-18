@@ -10,7 +10,37 @@ export const users = mysqlTable("users", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+}, table => [uniqueIndex("users_email_unique").on(table.email)]);
+
+export const passwordCredentials = mysqlTable("passwordCredentials", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  passwordHash: varchar("passwordHash", { length: 512 }).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastChangedAt: timestamp("lastChangedAt").defaultNow().notNull(),
 });
+
+export const warehouseRegions = mysqlTable("warehouseRegions", {
+  code: varchar("code", { length: 24 }).primaryKey(),
+  hubName: varchar("hubName", { length: 120 }).notNull(),
+  city: varchar("city", { length: 100 }).notNull(),
+  state: varchar("state", { length: 100 }).notNull(),
+  timeZone: varchar("timeZone", { length: 64 }).default("Asia/Kolkata").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+});
+
+export const userProfiles = mysqlTable("userProfiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  preferredRegionCode: varchar("preferredRegionCode", { length: 24 }).default("IN-W-MUM").notNull(),
+  timeZone: varchar("timeZone", { length: 64 }).default("Asia/Kolkata").notNull(),
+  dataVisibility: mysqlEnum("dataVisibility", ["private"]).default("private").notNull(),
+  operationalNotifications: boolean("operationalNotifications").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, table => [index("user_profiles_region_idx").on(table.preferredRegionCode)]);
 
 export const warehouseOrders = mysqlTable("warehouseOrders", {
   id: int("id").autoincrement().primaryKey(),
@@ -22,12 +52,14 @@ export const warehouseOrders = mysqlTable("warehouseOrders", {
   sla: varchar("sla", { length: 80 }).notNull(),
   valueCents: int("valueCents").notNull(),
   zone: varchar("zone", { length: 80 }).notNull(),
+  regionCode: varchar("regionCode", { length: 24 }).default("IN-W-MUM").notNull(),
   isConflict: boolean("isConflict").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, table => [
   uniqueIndex("warehouse_orders_user_external_unique").on(table.userId, table.externalId),
   index("warehouse_orders_user_status_idx").on(table.userId, table.status),
+  index("warehouse_orders_user_region_idx").on(table.userId, table.regionCode),
 ]);
 
 export const inventoryItems = mysqlTable("inventoryItems", {
@@ -39,6 +71,7 @@ export const inventoryItems = mysqlTable("inventoryItems", {
   requiredQuantity: int("requiredQuantity").notNull(),
   reorderLevel: int("reorderLevel").notNull(),
   zone: varchar("zone", { length: 80 }).notNull(),
+  regionCode: varchar("regionCode", { length: 24 }).default("IN-W-MUM").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, table => [
@@ -69,6 +102,8 @@ export const warehouseDocuments = mysqlTable("warehouseDocuments", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type WarehouseRegion = typeof warehouseRegions.$inferSelect;
 export type WarehouseOrder = typeof warehouseOrders.$inferSelect;
 export type InventoryItem = typeof inventoryItems.$inferSelect;
 export type WarehouseAuditEvent = typeof warehouseAuditEvents.$inferSelect;

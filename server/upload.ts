@@ -1,7 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { sdk } from "./_core/sdk";
 import { createWarehouseDocument } from "./db";
-import { workspaceUserId } from "./db";
 import { storagePut } from "./storage";
 
 const MAX_DOCUMENT_BYTES = 10 * 1024 * 1024;
@@ -13,14 +12,14 @@ export function registerWarehouseUploadRoutes(app: Express) {
   app.post("/api/warehouse/documents", async (req: Request, res: Response) => {
     try {
       const user = await sdk.authenticateRequest(req).catch(() => null);
-      const userId = workspaceUserId(user);
+      if (!user) return res.status(401).json({ message: "Sign in before uploading to private warehouse storage." });
       const { fileName, mimeType, contentBase64, orderId } = req.body as { fileName?: string; mimeType?: string; contentBase64?: string; orderId?: number };
       if (!fileName || !mimeType || !contentBase64) return res.status(400).json({ message: "File name, type, and content are required." });
       if (!ALLOWED_DOCUMENT_TYPES.has(mimeType)) return res.status(415).json({ message: "Upload a PDF, image, CSV, text file, or spreadsheet." });
       const data = Buffer.from(contentBase64, "base64");
       if (!data.length || data.length > MAX_DOCUMENT_BYTES) return res.status(413).json({ message: "Documents must be smaller than 10 MB." });
-      const saved = await storagePut(`warehouse/${userId || "guest"}/documents/${safeFileName(fileName)}`, data, mimeType);
-      const document = await createWarehouseDocument({ userId, orderId: Number.isInteger(orderId) ? orderId : null, fileName: safeFileName(fileName), mimeType, sizeBytes: data.length, storageKey: saved.key, storageUrl: saved.url });
+      const saved = await storagePut(`warehouse/${user.id}/documents/${safeFileName(fileName)}`, data, mimeType);
+      const document = await createWarehouseDocument({ userId: user.id, orderId: Number.isInteger(orderId) ? orderId : null, fileName: safeFileName(fileName), mimeType, sizeBytes: data.length, storageKey: saved.key, storageUrl: saved.url });
       return res.status(201).json(document);
     } catch (error) {
       console.error("[Warehouse upload]", error);

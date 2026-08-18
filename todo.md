@@ -14,3 +14,14 @@
 - [x] Test the document upload interaction through the preview interface and confirm the stored file can be opened.
 - [x] Verify every main navigation destination loads correctly in the live preview.
 - [x] Verify returning between navigation sections preserves the persistent workspace state without dead ends.
+- [x] Define Indian regional warehouse locations, states, time zones, and INR operational displays.
+- [x] Add a private user profile model with personal preferences and warehouse-region settings.
+- [x] Implement secure email-and-password registration and sign-in using hashed passwords and protected sessions.
+- [x] Ensure profile and account data can only be read or changed by the authenticated account owner or a designated administrator.
+- [x] Add profile management and account sign-in interfaces without OTP-based login.
+- [x] Localize dashboard data, dates, currency, and operational labels for Indian regions.
+- [x] Test password authentication, privacy controls, profile updates, and Indian-region workflow display.
+- [x] Fix the private-profile form so the existing display name is loaded before saving regional preferences.
+- [x] Prevent session synchronization from clearing local-account names and email addresses after password sign-in.
+- [x] Clarify and verify owner-only private-profile access without an app-level administrator bypass.
+- [x] Properly synchronize the private-profile form from the loaded profile response and verify the saved name auto-populates on first open.
